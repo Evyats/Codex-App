@@ -13,21 +13,13 @@ export function HomeScreen() {
     if (appId === 'reps-tracker') {
       router.push('/reps-tracker');
     }
+    if (appId === 'wake-tracker') {
+      router.push('/wake-tracker');
+    }
   };
 
   return (
     <View className="flex-1 px-5 py-6 space-y-4">
-      <Card mode="contained" style={{ borderRadius: 16 }}>
-        <Card.Content>
-          <View className="space-y-2">
-            <Text variant="titleMedium">React Native Paper is hooked up</Text>
-            <Button mode="contained-tonal" icon="check-circle-outline" onPress={() => {}}>
-              Paper Button
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
-
       <View className="space-y-3">
         {INNER_APPS.map((app) => (
           <Card

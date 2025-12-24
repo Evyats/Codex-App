@@ -16,6 +16,7 @@ import {
 } from 'react-native-paper';
 
 import { RepsTrackerProvider } from '../src/state/repsTracker';
+import { WakeTrackerProvider } from '../src/state/wakeTracker';
 
 type RootProvidersProps = {
   children: ReactNode;
@@ -26,7 +27,9 @@ function RootProviders({ children, theme }: RootProvidersProps) {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
-        <RepsTrackerProvider>{children}</RepsTrackerProvider>
+        <RepsTrackerProvider>
+          <WakeTrackerProvider>{children}</WakeTrackerProvider>
+        </RepsTrackerProvider>
       </PaperProvider>
     </SafeAreaProvider>
   );
@@ -96,6 +99,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ title: 'Mini Apps' }} />
         <Stack.Screen name="reps-tracker" options={{ title: 'Reps Tracker' }} />
+        <Stack.Screen name="wake-tracker" options={{ title: 'Wake-up Tracker' }} />
       </Stack>
     </RootProviders>
   );
