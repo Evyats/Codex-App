@@ -1,15 +1,13 @@
 /** @jsxImportSource nativewind */
 import { useRouter } from 'expo-router';
-import { useColorScheme } from 'nativewind';
-import { Pressable, Text, View } from 'react-native';
+import { View } from 'react-native';
+import { Button, Card, Text, useTheme } from 'react-native-paper';
 
 import { INNER_APPS } from '../data/innerApps';
 
 export function HomeScreen() {
   const router = useRouter();
-  const { colorScheme } = useColorScheme();
-  const resolvedScheme = colorScheme ?? 'dark';
-  const ripple = resolvedScheme === 'dark' ? '#1f2937' : '#e2e8f0';
+  const theme = useTheme();
 
   const handleSelect = (appId: string) => {
     if (appId === 'reps-tracker') {
@@ -18,23 +16,33 @@ export function HomeScreen() {
   };
 
   return (
-    <View className="flex-1 px-5 py-6">
-      <View className="space-y-4">
+    <View className="flex-1 px-5 py-6 space-y-4">
+      <Card mode="contained" style={{ borderRadius: 16 }}>
+        <Card.Content>
+          <View className="space-y-2">
+            <Text variant="titleMedium">React Native Paper is hooked up</Text>
+            <Button mode="contained-tonal" icon="check-circle-outline" onPress={() => {}}>
+              Paper Button
+            </Button>
+          </View>
+        </Card.Content>
+      </Card>
+
+      <View className="space-y-3">
         {INNER_APPS.map((app) => (
-          <Pressable
+          <Card
             key={app.id}
+            mode="elevated"
             onPress={() => handleSelect(app.id)}
-            android_ripple={{ color: ripple }}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900"
-            style={{ overflow: 'hidden' }}
+            style={{ borderRadius: 16, backgroundColor: theme.colors.surface }}
           >
-            <Text className="text-xl font-semibold text-slate-900 dark:text-white">
-              {app.title}
-            </Text>
-            <Text className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-              {app.description}
-            </Text>
-          </Pressable>
+            <Card.Title title={app.title} subtitle={app.description} />
+            <Card.Actions>
+              <Button mode="contained" icon="arrow-right" onPress={() => handleSelect(app.id)}>
+                Open
+              </Button>
+            </Card.Actions>
+          </Card>
         ))}
       </View>
     </View>

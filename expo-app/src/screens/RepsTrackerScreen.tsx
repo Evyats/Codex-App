@@ -1,6 +1,6 @@
 /** @jsxImportSource nativewind */
-import { useColorScheme } from 'nativewind';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { Button, Card, TextInput } from 'react-native-paper';
 
 import { ExerciseRow } from '../components/ExerciseRow';
 import { Exercise } from '../types';
@@ -28,15 +28,11 @@ export function RepsTrackerScreen({
   onRemove,
   onAddExercise,
 }: RepsTrackerScreenProps) {
-  const { colorScheme } = useColorScheme();
-  const resolvedScheme = colorScheme ?? 'dark';
-  const ripple = resolvedScheme === 'dark' ? '#1f2937' : '#e2e8f0';
-
   return (
-    <View className="flex-1">
-      <ScrollView className="flex-1 px-5 py-4">
-        {exercises.map((exercise, index) => (
-          <View key={exercise.id} className={index === exercises.length - 1 ? '' : 'mb-3'}>
+    <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}>
+      <View className="space-y-4">
+        {exercises.map((exercise) => (
+          <View key={exercise.id} style={{ marginBottom: 12 }}>
             <ExerciseRow
               exercise={exercise}
               onChangeReps={(value) => onChangeReps(exercise.id, value)}
@@ -48,29 +44,31 @@ export function RepsTrackerScreen({
           </View>
         ))}
 
-        <View className="mt-6 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <Text className="mb-3 text-lg font-semibold text-slate-900 dark:text-white">
-            Add exercise
-          </Text>
-          <View className="flex-row items-center space-x-3">
-            <TextInput
-              value={newExerciseName}
-              onChangeText={onChangeNewExerciseName}
-              placeholder="Exercise name"
-              placeholderTextColor="#94a3b8"
-              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-            />
-            <Pressable
-              onPress={onAddExercise}
-              android_ripple={{ color: ripple }}
-              className="rounded-lg bg-emerald-600 px-4 py-2 dark:bg-emerald-500"
-              style={{ overflow: 'hidden' }}
-            >
-              <Text className="font-semibold text-white">Add</Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+        <Card mode="outlined" style={{ borderRadius: 16, marginTop: 4 }}>
+          <Card.Title title="Add exercise" />
+          <Card.Content>
+            <View className="flex-row items-center space-x-3">
+              <TextInput
+                mode="outlined"
+                label="Exercise name"
+                value={newExerciseName}
+                onChangeText={onChangeNewExerciseName}
+                returnKeyType="done"
+                style={{ flex: 1 }}
+              />
+              <Button
+                mode="contained"
+                icon="plus"
+                onPress={onAddExercise}
+                disabled={!newExerciseName.trim().length}
+                compact
+              >
+                Add exercise
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
+      </View>
+    </ScrollView>
   );
 }

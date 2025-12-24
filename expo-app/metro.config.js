@@ -1,6 +1,23 @@
+const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
 
-const config = getDefaultConfig(__dirname);
+module.exports = (async () => {
+  const config = await getDefaultConfig(__dirname);
 
-module.exports = withNativeWind(config, { input: './global.css' });
+  config.resolver = {
+    ...config.resolver,
+    sourceExts: [...config.resolver.sourceExts, 'cjs'],
+    extraNodeModules: {
+      ...(config.resolver?.extraNodeModules || {}),
+      'react-native-vector-icons': path.join(
+        __dirname,
+        'node_modules',
+        '@expo',
+        'vector-icons'
+      ),
+    },
+  };
+
+  return withNativeWind(config, { input: './global.css' });
+})();
