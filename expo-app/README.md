@@ -16,6 +16,8 @@ npm install
 npm start
 ```
 - In the Expo CLI, press `w` for web, or scan the QR code/open on Android or iOS.
+or:
+npx expo start
 
 ## Tailwind/NativeWind notes
 - Styling uses `className` on React Native components (NativeWind).
