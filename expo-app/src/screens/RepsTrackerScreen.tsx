@@ -1,8 +1,8 @@
 /** @jsxImportSource nativewind */
 import { ScrollView, View } from 'react-native';
-import { Button, Card, TextInput } from 'react-native-paper';
 
 import { ExerciseRow } from '../components/ExerciseRow';
+import { Button, Card, CardContent, CardTitle, TextInput } from '../components/paper';
 import { Exercise } from '../types';
 
 type RepsTrackerScreenProps = {
@@ -29,44 +29,42 @@ export function RepsTrackerScreen({
   onAddExercise,
 }: RepsTrackerScreenProps) {
   return (
-    <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}>
-      <View className="space-y-4">
+    <ScrollView>
+      <View className="px-6 py-8    flex flex-col gap-7">
         {exercises.map((exercise) => (
-          <View key={exercise.id} style={{ marginBottom: 12 }}>
-            <ExerciseRow
-              exercise={exercise}
-              onChangeReps={(value) => onChangeReps(exercise.id, value)}
-              onAdjustReps={(delta) => onAdjustReps(exercise.id, delta)}
-              onAdjustStep={(delta) => onAdjustStep(exercise.id, delta)}
-              onReset={() => onReset(exercise.id)}
-              onRemove={() => onRemove(exercise.id)}
-            />
-          </View>
+          <ExerciseRow
+            key={exercise.id}
+            exercise={exercise}
+            onChangeReps={(value) => onChangeReps(exercise.id, value)}
+            onAdjustReps={(delta) => onAdjustReps(exercise.id, delta)}
+            onAdjustStep={(delta) => onAdjustStep(exercise.id, delta)}
+            onReset={() => onReset(exercise.id)}
+            onRemove={() => onRemove(exercise.id)}
+          />
         ))}
 
-        <Card mode="outlined" style={{ borderRadius: 16, marginTop: 4 }}>
-          <Card.Title title="Add exercise" />
-          <Card.Content>
-            <View className="flex-row items-center space-x-3">
+        <Card className="rounded-2xl" mode="outlined">
+          <CardTitle title="Add exercise" />
+          <CardContent>
+            <View className="flex flex-col gap-4">
               <TextInput
                 mode="outlined"
                 label="Exercise name"
                 value={newExerciseName}
                 onChangeText={onChangeNewExerciseName}
                 returnKeyType="done"
-                style={{ flex: 1 }}
+                className="rounded-3xl"
               />
               <Button
                 mode="contained"
                 icon="plus"
                 onPress={onAddExercise}
                 disabled={!newExerciseName.trim().length}
-                compact
               >
                 Add exercise
               </Button>
             </View>
-          </Card.Content>
+          </CardContent>
         </Card>
       </View>
     </ScrollView>

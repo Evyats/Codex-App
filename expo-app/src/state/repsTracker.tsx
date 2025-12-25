@@ -1,7 +1,8 @@
 /** @jsxImportSource nativewind */
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Exercise } from '../types';
+import { loadJSON, saveJSON } from './storage';
 
 type RepsTrackerContextValue = {
   exercises: Exercise[];
@@ -20,11 +21,36 @@ const DEFAULT_EXERCISES: Exercise[] = [
   { id: 'pushups', name: 'Push Ups', reps: 0, step: 1 },
 ];
 
+const STORAGE_KEY = 'reps-tracker/state/v1';
+
 const RepsTrackerContext = createContext<RepsTrackerContextValue | undefined>(undefined);
 
 export function RepsTrackerProvider({ children }: { children: ReactNode }) {
   const [exercises, setExercises] = useState<Exercise[]>(() => DEFAULT_EXERCISES);
   const [newExerciseName, setNewExerciseName] = useState('');
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    (async () => {
+      const stored = await loadJSON<Exercise[]>(STORAGE_KEY);
+      if (!isMounted) return;
+      if (Array.isArray(stored)) {
+        setExercises(stored);
+      }
+      setHydrated(true);
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    saveJSON(STORAGE_KEY, exercises);
+  }, [exercises, hydrated]);
 
   const updateExercise = (id: string, updater: (exercise: Exercise) => Exercise) => {
     setExercises((prev) => prev.map((exercise) => (exercise.id === id ? updater(exercise) : exercise)));

@@ -3,8 +3,9 @@ import React, { useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { Button, Card, IconButton, Text, TextInput, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
+import { Button, Card, CardContent, CardTitle, IconButton, TextInput } from '../components/paper';
 import { WakeEntry } from '../types';
 
 type WakeTrackerScreenProps = {
@@ -13,13 +14,15 @@ type WakeTrackerScreenProps = {
   onChangeDate: (value: Date) => void;
   onAdd: () => void;
   onRemoveEntry: (id: string) => void;
+  onResetToSeed: () => void;
 };
 
 function minutesToLabel(minutes: number) {
-  const h = Math.floor(minutes / 60)
+  const rounded = Math.round(minutes);
+  const h = Math.floor(rounded / 60)
     .toString()
     .padStart(2, '0');
-  const m = (minutes % 60).toString().padStart(2, '0');
+  const m = (rounded % 60).toString().padStart(2, '0');
   return `${h}:${m}`;
 }
 
@@ -29,6 +32,7 @@ export function WakeTrackerScreen({
   onChangeDate,
   onAdd,
   onRemoveEntry,
+  onResetToSeed,
 }: WakeTrackerScreenProps) {
   const theme = useTheme();
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -71,7 +75,8 @@ export function WakeTrackerScreen({
       x: scaleX(Math.floor(d.date.getTime() / (1000 * 60 * 60 * 24))),
       y: scaleY(d.minutes),
       label: d.label,
-      dateLabel: d.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      dateLabel: `${d.date.getDate()}.${d.date.getMonth() + 1}`,
+      dayOfWeek: d.date.getDay(),
       id: entries[idx].id,
     }));
 
@@ -105,15 +110,34 @@ export function WakeTrackerScreen({
           );
         })}
 
+        {/* Week separators (between Saturday and Sunday) */}
+        {points.slice(1).map((p, idx) => {
+          if (p.dayOfWeek !== 0) return null;
+          const confirmPrev = points[idx];
+          const x = (confirmPrev.x + p.x) / 2;
+          return (
+            <Line
+              key={`week-${p.id}`}
+              x1={x}
+              x2={x}
+              y1={padding.top}
+              y2={height - padding.bottom}
+              stroke={theme.colors.outlineVariant}
+              strokeDasharray="3 6"
+            />
+          );
+        })}
+
         {/* X labels */}
         {points.map((p, idx) => (
           <SvgText
             key={`x-${idx}`}
             x={p.x}
-            y={height - padding.bottom + 16}
+            y={height - padding.bottom + 22}
             fill={theme.colors.onSurface}
             fontSize="11"
             textAnchor="middle"
+            transform={`rotate(90 ${p.x} ${height - padding.bottom + 22})`}
           >
             {p.dateLabel}
           </SvgText>
@@ -150,7 +174,7 @@ export function WakeTrackerScreen({
               <Circle
                 cx={p.x}
                 cy={p.y}
-                r={10}
+                r={8}
                 fill={isSelected ? theme.colors.primary : theme.colors.secondary}
                 stroke={isSelected ? theme.colors.onPrimary : 'transparent'}
                 strokeWidth={isSelected ? 2 : 0}
@@ -164,55 +188,68 @@ export function WakeTrackerScreen({
   }, [graphData, theme.colors, entries, selectedEntryId]);
 
   return (
-    <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16, gap: 16 }}>
-      <Card mode="elevated" style={{ borderRadius: 16 }}>
-        <Card.Title title="Wake-up graph" subtitle="Y = time of wake-up, X = date" />
-        <Card.Content>{chart}</Card.Content>
-      </Card>
+    <ScrollView>
+      <View className="px-6 py-8 flex flex-col gap-7">
+        <Card className="rounded-[18px]" mode="elevated">
+          <CardTitle title="Wake-up graph" subtitle="Y = time of wake-up, X = date" />
+          <CardContent>{chart}</CardContent>
+        </Card>
 
-      <Card mode="outlined" style={{ borderRadius: 16 }}>
-        <Card.Title title="Add wake-up time" />
-        <Card.Content>
-          <View className="space-y-3">
-            <View className="flex-row items-center space-x-2">
-              <TextInput
+        <Card className="rounded-[18px]" mode="outlined">
+          <CardTitle title="Add wake-up time" />
+          <CardContent>
+            <View className="flex flex-col gap-6">
+              <View className="flex-row items-center gap-4">
+                <TextInput
+                  mode="outlined"
+                  label="Date"
+                  value={selectedDate.toISOString().slice(0, 10)}
+                  editable={false}
+                  className="flex-1 rounded-3xl"
+                />
+                <IconButton icon="calendar-month" mode="contained-tonal" onPress={() => setShowDatePicker(true)} />
+              </View>
+              <View className="flex-row items-center gap-4">
+                <TextInput
+                  mode="outlined"
+                  label="Time"
+                  value={minutesToLabel(selectedDate.getHours() * 60 + selectedDate.getMinutes())}
+                  editable={false}
+                  className="flex-1 rounded-3xl"
+                />
+                <IconButton icon="clock-outline" mode="contained-tonal" onPress={() => setShowTimePicker(true)} />
+              </View>
+              <View className="flex-row gap-4">
+                <Button mode="contained" icon="plus" onPress={onAdd} className="flex-1">
+                  Add entry
+                </Button>
+                <Button
+                  mode="contained-tonal"
+                  icon="delete-outline"
+                  disabled={!selectedEntryId}
+                  onPress={() => {
+                    if (selectedEntryId) {
+                      onRemoveEntry(selectedEntryId);
+                      setSelectedEntryId(null);
+                    }
+                  }}
+                  className="flex-1"
+                >
+                  Delete selected
+                </Button>
+              </View>
+              <Button
                 mode="outlined"
-                label="Date"
-                value={selectedDate.toISOString().slice(0, 10)}
-                editable={false}
-                style={{ flex: 1 }}
-              />
-              <IconButton icon="calendar-month" mode="contained-tonal" onPress={() => setShowDatePicker(true)} />
+                icon="refresh"
+                onPress={onResetToSeed}
+                className="self-start"
+              >
+                Reset to seed data
+              </Button>
             </View>
-            <View className="flex-row items-center space-x-2">
-              <TextInput
-                mode="outlined"
-                label="Time"
-                value={minutesToLabel(selectedDate.getHours() * 60 + selectedDate.getMinutes())}
-                editable={false}
-                style={{ flex: 1 }}
-              />
-              <IconButton icon="clock-outline" mode="contained-tonal" onPress={() => setShowTimePicker(true)} />
-            </View>
-            <Button mode="contained" icon="plus" onPress={onAdd}>
-              Add entry
-            </Button>
-            <Button
-              mode="contained-tonal"
-              icon="delete-outline"
-              disabled={!selectedEntryId}
-              onPress={() => {
-                if (selectedEntryId) {
-                  onRemoveEntry(selectedEntryId);
-                  setSelectedEntryId(null);
-                }
-              }}
-            >
-              Delete selected
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
+          </CardContent>
+        </Card>
+      </View>
 
       <DateTimePickerModal
         isVisible={showDatePicker}

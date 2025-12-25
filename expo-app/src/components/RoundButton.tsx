@@ -16,8 +16,7 @@ export function RoundButton({ label, onPress }: RoundButtonProps) {
     <Pressable
       onPress={onPress}
       android_ripple={{ color: ripple, borderless: true }}
-      className="h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
-      style={{ overflow: 'hidden' }}
+      className="h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-slate-300 bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
     >
       <Text className="text-lg font-semibold text-slate-900 dark:text-white">{label}</Text>
     </Pressable>

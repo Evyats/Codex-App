@@ -51,12 +51,13 @@ export default function RootLayout() {
     const base = resolvedScheme === 'dark' ? MD3DarkTheme : MD3LightTheme;
     return {
       ...base,
+      roundness: 24,
       colors: {
         ...base.colors,
-        primary: '#8b5cf6',
-        secondary: '#14b8a6',
-        background: resolvedScheme === 'dark' ? '#0f172a' : '#f8fafc',
-        surface: resolvedScheme === 'dark' ? '#111827' : '#ffffff',
+        primary: '#7db6ff',
+        secondary: '#a7d3ff',
+        background: resolvedScheme === 'dark' ? '#0c1628' : '#f7faff',
+        surface: resolvedScheme === 'dark' ? '#111d33' : '#ffffff',
       },
     };
   }, [resolvedScheme]);
@@ -83,7 +84,7 @@ export default function RootLayout() {
           headerTitleStyle: { fontWeight: '600' },
           contentStyle: { backgroundColor: headerColors.contentBackground },
           headerRight: () => (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View className="flex-row items-center">
               <Button
                 mode="text"
                 icon={themeIcon}
