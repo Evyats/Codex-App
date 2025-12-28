@@ -30,7 +30,7 @@ export function ExerciseRow({
   canMoveDown,
 }: ExerciseRowProps) {
   return (
-    <Card className="rounded-2xl border-l-4 border-l-sky-300" mode="elevated">
+    <Card className="rounded-[18px] border-l-4 border-l-sky-300" mode="elevated">
       <CardContent className="flex flex-col gap-5">
         <View className="flex-row items-center justify-between">
           <Text variant="titleMedium">{exercise.name}</Text>

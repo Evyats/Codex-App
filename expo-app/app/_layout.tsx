@@ -54,7 +54,7 @@ function ThemedLayout() {
     const paletteColors = resolvedScheme === 'dark' ? palette.dark : palette.light;
     return {
       ...base,
-      roundness: 24,
+      roundness: 18,
       colors: {
         ...base.colors,
         primary: paletteColors.primary,
@@ -104,6 +104,7 @@ function ThemedLayout() {
         <Stack.Screen name="index" options={{ title: 'Mini Apps' }} />
         <Stack.Screen name="reps-tracker" options={{ title: 'Reps Tracker' }} />
         <Stack.Screen name="wake-tracker" options={{ title: 'Wake-up Tracker' }} />
+        <Stack.Screen name="design-lab" options={{ title: 'Design Lab' }} />
       </Stack>
     </RootProviders>
   );

@@ -199,7 +199,26 @@ export function WakeTrackerScreen({
         </Card>
 
         <Card className="rounded-[18px]" mode="outlined">
-          <CardTitle title="Add wake-up time" />
+          <CardTitle
+            title="Add wake-up time"
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon="refresh"
+                accessibilityLabel="Reset wake-up data"
+                onPress={() => {
+                  Alert.alert(
+                    'Reset wake-up data?',
+                    'This will replace all entries with the December seed data.',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Reset', style: 'destructive', onPress: onResetToSeed },
+                    ]
+                  );
+                }}
+              />
+            )}
+          />
           <CardContent>
             <View className="flex flex-col gap-6">
               <View className="flex-row items-center gap-4">
@@ -208,7 +227,7 @@ export function WakeTrackerScreen({
                   label="Date"
                   value={selectedDate.toISOString().slice(0, 10)}
                   editable={false}
-                  className="flex-1 rounded-3xl"
+                  className="flex-1"
                 />
                 <IconButton icon="calendar-month" mode="contained-tonal" onPress={() => setShowDatePicker(true)} />
               </View>
@@ -218,7 +237,7 @@ export function WakeTrackerScreen({
                   label="Time"
                   value={minutesToLabel(selectedDate.getHours() * 60 + selectedDate.getMinutes())}
                   editable={false}
-                  className="flex-1 rounded-3xl"
+                  className="flex-1"
                 />
                 <IconButton icon="clock-outline" mode="contained-tonal" onPress={() => setShowTimePicker(true)} />
               </View>
@@ -241,23 +260,6 @@ export function WakeTrackerScreen({
                   Delete selected
                 </Button>
               </View>
-              <Button
-                mode="outlined"
-                icon="refresh"
-                onPress={() => {
-                  Alert.alert(
-                    'Reset wake-up data?',
-                    'This will replace all entries with the December seed data.',
-                    [
-                      { text: 'Cancel', style: 'cancel' },
-                      { text: 'Reset', style: 'destructive', onPress: onResetToSeed },
-                    ]
-                  );
-                }}
-                className="self-start"
-              >
-                Reset to seed data
-              </Button>
             </View>
           </CardContent>
         </Card>

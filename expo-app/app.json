@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "expo-app",
-    "slug": "expo-app",
+    "slug": "expo-app-evyat",
     "version": "1.0.0",
     "scheme": "expo-app",
     "orientation": "portrait",
@@ -22,13 +22,20 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.evyats.expoappevyat"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1ebf613a-2358-483a-977b-8b04ecbee4ea"
+      }
+    }
   }
 }

@@ -49,7 +49,7 @@ export function RepsTrackerScreen({
           />
         ))}
 
-        <Card className="rounded-2xl" mode="outlined">
+        <Card className="rounded-[18px]" mode="outlined">
           <CardTitle title="Add exercise" />
           <CardContent>
             <View className="flex-row items-center gap-3">
@@ -59,7 +59,7 @@ export function RepsTrackerScreen({
                 value={newExerciseName}
                 onChangeText={onChangeNewExerciseName}
                 returnKeyType="done"
-                className="flex-1 rounded-3xl"
+                className="flex-1"
               />
               <IconButton
                 icon="plus"

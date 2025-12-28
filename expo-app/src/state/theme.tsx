@@ -56,6 +56,12 @@ const PALETTES: ThemePalette[] = [
     light: { primary: '#86a7d9', secondary: '#b3c7e8', background: '#f5f7fb', surface: '#ffffff' },
     dark: { primary: '#7699cc', secondary: '#9cb6dd', background: '#0f1724', surface: '#162234' },
   },
+  {
+    id: 'solarized',
+    name: 'Solarized',
+    light: { primary: '#b58900', secondary: '#2aa198', background: '#fdf6e3', surface: '#eee8d5' },
+    dark: { primary: '#b58900', secondary: '#2aa198', background: '#002b36', surface: '#073642' },
+  },
 ];
 
 const DEFAULT_PALETTE_ID = 'sky';

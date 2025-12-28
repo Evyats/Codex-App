@@ -1,4 +1,4 @@
-export type InnerAppId = 'reps-tracker' | 'wake-tracker';
+export type InnerAppId = 'reps-tracker' | 'wake-tracker' | 'design-lab';
 
 export type Exercise = {
   id: string;

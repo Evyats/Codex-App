@@ -17,6 +17,9 @@ export function HomeScreen() {
     if (appId === 'wake-tracker') {
       router.push('/wake-tracker');
     }
+    if (appId === 'design-lab') {
+      router.push('/design-lab');
+    }
   };
 
   return (
@@ -24,7 +27,7 @@ export function HomeScreen() {
       <View className="px-7 py-10">
         {INNER_APPS.map((app) => (
           <View key={app.id} className="mb-6">
-            <Card className="rounded-[20px]" mode="elevated" onPress={() => handleSelect(app.id)}>
+            <Card className="rounded-[18px]" mode="elevated" onPress={() => handleSelect(app.id)}>
               <View className="px-6 py-5 flex flex-col gap-4">
                 <CardTitle title={app.title} subtitle={app.description} />
                 <View className="pt-3">
@@ -48,7 +51,7 @@ export function HomeScreen() {
                 <Pressable
                   key={palette.id}
                   onPress={() => setPaletteId(palette.id)}
-                  className={`rounded-2xl border px-3 py-2 ${isSelected ? 'border-sky-400' : 'border-slate-200 dark:border-slate-700'}`}
+                  className={`rounded-[18px] border px-3 py-2 ${isSelected ? 'border-sky-400' : 'border-slate-200 dark:border-slate-700'}`}
                 >
                   <View className="flex-row items-center gap-2">
                     <View
