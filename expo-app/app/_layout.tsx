@@ -16,6 +16,7 @@ import {
 } from 'react-native-paper';
 
 import { RepsTrackerProvider } from '../src/state/repsTracker';
+import { ThemePaletteProvider, useThemePalette } from '../src/state/theme';
 import { WakeTrackerProvider } from '../src/state/wakeTracker';
 
 type RootProvidersProps = {
@@ -35,8 +36,9 @@ function RootProviders({ children, theme }: RootProvidersProps) {
   );
 }
 
-export default function RootLayout() {
+function ThemedLayout() {
   const { colorScheme, setColorScheme, toggleColorScheme } = useColorScheme();
+  const { palette } = useThemePalette();
   const [didInitScheme, setDidInitScheme] = useState(false);
   const resolvedScheme = colorScheme ?? 'dark';
 
@@ -49,18 +51,19 @@ export default function RootLayout() {
 
   const paperTheme = useMemo<MD3Theme>(() => {
     const base = resolvedScheme === 'dark' ? MD3DarkTheme : MD3LightTheme;
+    const paletteColors = resolvedScheme === 'dark' ? palette.dark : palette.light;
     return {
       ...base,
       roundness: 24,
       colors: {
         ...base.colors,
-        primary: '#7db6ff',
-        secondary: '#a7d3ff',
-        background: resolvedScheme === 'dark' ? '#0c1628' : '#f7faff',
-        surface: resolvedScheme === 'dark' ? '#111d33' : '#ffffff',
+        primary: paletteColors.primary,
+        secondary: paletteColors.secondary,
+        background: paletteColors.background,
+        surface: paletteColors.surface,
       },
     };
-  }, [resolvedScheme]);
+  }, [palette.dark, palette.light, resolvedScheme]);
 
   const headerColors = useMemo(
     () => ({
@@ -103,5 +106,13 @@ export default function RootLayout() {
         <Stack.Screen name="wake-tracker" options={{ title: 'Wake-up Tracker' }} />
       </Stack>
     </RootProviders>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemePaletteProvider>
+      <ThemedLayout />
+    </ThemePaletteProvider>
   );
 }

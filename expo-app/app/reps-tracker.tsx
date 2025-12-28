@@ -13,6 +13,7 @@ export default function RepsTrackerRoute() {
     resetExercise,
     removeExercise,
     addExercise,
+    moveExercise,
   } = useRepsTracker();
 
   return (
@@ -26,6 +27,7 @@ export default function RepsTrackerRoute() {
       onReset={resetExercise}
       onRemove={removeExercise}
       onAddExercise={addExercise}
+      onMoveExercise={moveExercise}
     />
   );
 }

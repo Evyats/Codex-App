@@ -1,6 +1,6 @@
 /** @jsxImportSource nativewind */
 import React, { useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useTheme } from 'react-native-paper';
@@ -38,6 +38,9 @@ export function WakeTrackerScreen({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
+  const selectedDot = theme.colors.primary;
+  const unselectedDot = theme.colors.secondaryContainer ?? theme.colors.secondary;
+  const selectedStroke = theme.colors.onPrimary;
 
   const graphData = useMemo(
     () =>
@@ -175,8 +178,8 @@ export function WakeTrackerScreen({
                 cx={p.x}
                 cy={p.y}
                 r={8}
-                fill={isSelected ? theme.colors.primary : theme.colors.secondary}
-                stroke={isSelected ? theme.colors.onPrimary : 'transparent'}
+                fill={isSelected ? selectedDot : unselectedDot}
+                stroke={isSelected ? selectedStroke : 'transparent'}
                 strokeWidth={isSelected ? 2 : 0}
                 onPress={() => setSelectedEntryId(p.id)}
               />
@@ -241,7 +244,16 @@ export function WakeTrackerScreen({
               <Button
                 mode="outlined"
                 icon="refresh"
-                onPress={onResetToSeed}
+                onPress={() => {
+                  Alert.alert(
+                    'Reset wake-up data?',
+                    'This will replace all entries with the December seed data.',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Reset', style: 'destructive', onPress: onResetToSeed },
+                    ]
+                  );
+                }}
                 className="self-start"
               >
                 Reset to seed data

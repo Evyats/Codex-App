@@ -1,12 +1,14 @@
 /** @jsxImportSource nativewind */
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { INNER_APPS } from '../data/innerApps';
-import { Button, Card, CardActions, CardTitle } from '../components/paper';
+import { Button, Card, CardActions, CardTitle, Text } from '../components/paper';
+import { useThemePalette } from '../state/theme';
 
 export function HomeScreen() {
   const router = useRouter();
+  const { palettes, paletteId, setPaletteId } = useThemePalette();
 
   const handleSelect = (appId: string) => {
     if (appId === 'reps-tracker') {
@@ -36,6 +38,34 @@ export function HomeScreen() {
             </Card>
           </View>
         ))}
+
+        <View className="mt-4">
+          <Text variant="titleMedium">Color themes</Text>
+          <View className="mt-3 flex flex-row flex-wrap gap-3">
+            {palettes.map((palette) => {
+              const isSelected = palette.id === paletteId;
+              return (
+                <Pressable
+                  key={palette.id}
+                  onPress={() => setPaletteId(palette.id)}
+                  className={`rounded-2xl border px-3 py-2 ${isSelected ? 'border-sky-400' : 'border-slate-200 dark:border-slate-700'}`}
+                >
+                  <View className="flex-row items-center gap-2">
+                    <View
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: palette.light.primary }}
+                    />
+                    <View
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: palette.light.secondary }}
+                    />
+                    <Text variant="labelMedium">{palette.name}</Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
       </View>
     </View>
   );

@@ -14,6 +14,7 @@ type RepsTrackerContextValue = {
   resetExercise: (id: string) => void;
   removeExercise: (id: string) => void;
   addExercise: () => void;
+  moveExercise: (id: string, direction: 'up' | 'down') => void;
 };
 
 const DEFAULT_EXERCISES: Exercise[] = [
@@ -79,6 +80,18 @@ export function RepsTrackerProvider({ children }: { children: ReactNode }) {
     setExercises((prev) => prev.filter((exercise) => exercise.id !== id));
   };
 
+  const moveExercise = (id: string, direction: 'up' | 'down') => {
+    setExercises((prev) => {
+      const index = prev.findIndex((exercise) => exercise.id === id);
+      if (index === -1) return prev;
+      const target = direction === 'up' ? index - 1 : index + 1;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  };
+
   const addExercise = () => {
     const trimmed = newExerciseName.trim();
     if (!trimmed) return;
@@ -100,6 +113,7 @@ export function RepsTrackerProvider({ children }: { children: ReactNode }) {
       resetExercise,
       removeExercise,
       addExercise,
+      moveExercise,
     }),
     [exercises, newExerciseName]
   );

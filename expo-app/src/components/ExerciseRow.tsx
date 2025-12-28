@@ -11,6 +11,10 @@ type ExerciseRowProps = {
   onAdjustStep: (delta: number) => void;
   onReset: () => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
 };
 
 export function ExerciseRow({
@@ -20,13 +24,19 @@ export function ExerciseRow({
   onAdjustStep,
   onReset,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp,
+  canMoveDown,
 }: ExerciseRowProps) {
   return (
     <Card className="rounded-2xl border-l-4 border-l-sky-300" mode="elevated">
       <CardContent className="flex flex-col gap-5">
         <View className="flex-row items-center justify-between">
           <Text variant="titleMedium">{exercise.name}</Text>
-          <View className="flex-row gap-2">
+          <View className="flex-row items-center gap-1">
+            <IconButton icon="chevron-up" onPress={onMoveUp} disabled={!canMoveUp} />
+            <IconButton icon="chevron-down" onPress={onMoveDown} disabled={!canMoveDown} />
             <Button mode="text" compact onPress={onReset}>
               Reset
             </Button>
@@ -42,8 +52,8 @@ export function ExerciseRow({
           </View>
         </View>
 
-        <View className="flex-row items-start justify-between">
-          <View className="w-32 flex flex-col gap-2">
+        <View className="flex-row flex-wrap">
+          <View className="w-1/2 pr-3 flex flex-col gap-2">
             <Text className="text-xs tracking-[0.6px] text-slate-500 dark:text-slate-400" variant="labelSmall">
               Reps
             </Text>
@@ -57,7 +67,7 @@ export function ExerciseRow({
             />
           </View>
 
-          <View className="flex-1 items-center flex flex-col gap-3">
+          <View className="w-1/2 pl-3 flex flex-col items-center gap-3">
             <Text className="text-xs tracking-[0.6px] text-slate-500 dark:text-slate-400" variant="labelSmall">
               Step size ({exercise.step})
             </Text>

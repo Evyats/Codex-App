@@ -2,7 +2,7 @@
 import { ScrollView, View } from 'react-native';
 
 import { ExerciseRow } from '../components/ExerciseRow';
-import { Button, Card, CardContent, CardTitle, TextInput } from '../components/paper';
+import { Card, CardContent, CardTitle, IconButton, TextInput } from '../components/paper';
 import { Exercise } from '../types';
 
 type RepsTrackerScreenProps = {
@@ -15,6 +15,7 @@ type RepsTrackerScreenProps = {
   onReset: (id: string) => void;
   onRemove: (id: string) => void;
   onAddExercise: () => void;
+  onMoveExercise: (id: string, direction: 'up' | 'down') => void;
 };
 
 export function RepsTrackerScreen({
@@ -27,11 +28,12 @@ export function RepsTrackerScreen({
   onReset,
   onRemove,
   onAddExercise,
+  onMoveExercise,
 }: RepsTrackerScreenProps) {
   return (
     <ScrollView>
-      <View className="px-6 py-8    flex flex-col gap-7">
-        {exercises.map((exercise) => (
+      <View className="px-6 py-8 flex flex-col gap-7">
+        {exercises.map((exercise, index) => (
           <ExerciseRow
             key={exercise.id}
             exercise={exercise}
@@ -40,29 +42,32 @@ export function RepsTrackerScreen({
             onAdjustStep={(delta) => onAdjustStep(exercise.id, delta)}
             onReset={() => onReset(exercise.id)}
             onRemove={() => onRemove(exercise.id)}
+            onMoveUp={() => onMoveExercise(exercise.id, 'up')}
+            onMoveDown={() => onMoveExercise(exercise.id, 'down')}
+            canMoveUp={index > 0}
+            canMoveDown={index < exercises.length - 1}
           />
         ))}
 
         <Card className="rounded-2xl" mode="outlined">
           <CardTitle title="Add exercise" />
           <CardContent>
-            <View className="flex flex-col gap-4">
+            <View className="flex-row items-center gap-3">
               <TextInput
                 mode="outlined"
                 label="Exercise name"
                 value={newExerciseName}
                 onChangeText={onChangeNewExerciseName}
                 returnKeyType="done"
-                className="rounded-3xl"
+                className="flex-1 rounded-3xl"
               />
-              <Button
-                mode="contained"
+              <IconButton
                 icon="plus"
+                mode="contained"
                 onPress={onAddExercise}
                 disabled={!newExerciseName.trim().length}
-              >
-                Add exercise
-              </Button>
+                accessibilityLabel="Add exercise"
+              />
             </View>
           </CardContent>
         </Card>
