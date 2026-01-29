@@ -1,6 +1,6 @@
 /** @jsxImportSource nativewind */
 import { useRouter } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { INNER_APPS } from '../data/innerApps';
 import { Button, Card, CardActions, CardTitle, Text } from '../components/paper';
@@ -23,7 +23,7 @@ export function HomeScreen() {
   };
 
   return (
-    <View className="flex-1">
+    <ScrollView className="flex-1">
       <View className="px-7 py-10">
         {INNER_APPS.map((app) => (
           <View key={app.id} className="mb-6">
@@ -70,6 +70,6 @@ export function HomeScreen() {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }

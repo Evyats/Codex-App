@@ -121,6 +121,24 @@ export function DesignLabScreen() {
         </Card>
 
         <Card className="rounded-[18px]" mode="outlined">
+          <CardTitle title="Box Styles" />
+          <CardContent className="flex flex-col gap-4">
+            <Surface className="rounded-[18px] p-4" elevation={3}>
+              <Text variant="titleSmall">Soft Elevation</Text>
+              <Text>Raised surface with gentle depth.</Text>
+            </Surface>
+            <View className="rounded-[18px] border border-dashed border-slate-300 p-4 dark:border-slate-600">
+              <Text variant="titleSmall">Dashed Outline</Text>
+              <Text>Great for empty states or placeholders.</Text>
+            </View>
+            <View className="rounded-[18px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+              <Text variant="titleSmall">Muted Fill</Text>
+              <Text>Subtle contrast for grouped content.</Text>
+            </View>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[18px]" mode="outlined">
           <CardTitle title="Surfaces & Progress" />
           <CardContent className="flex flex-col gap-4">
             <Surface className="rounded-[18px] p-4" elevation={2}>

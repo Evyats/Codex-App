@@ -35,8 +35,6 @@ export function ExerciseRow({
         <View className="flex-row items-center justify-between">
           <Text variant="titleMedium">{exercise.name}</Text>
           <View className="flex-row items-center gap-1">
-            <IconButton icon="chevron-up" onPress={onMoveUp} disabled={!canMoveUp} />
-            <IconButton icon="chevron-down" onPress={onMoveDown} disabled={!canMoveDown} />
             <Button mode="text" compact onPress={onReset}>
               Reset
             </Button>
@@ -54,9 +52,6 @@ export function ExerciseRow({
 
         <View className="flex-row flex-wrap">
           <View className="w-1/2 pr-3 flex flex-col gap-2">
-            <Text className="text-xs tracking-[0.6px] text-slate-500 dark:text-slate-400" variant="labelSmall">
-              Reps
-            </Text>
             <TextInput
               mode="outlined"
               keyboardType="numeric"
@@ -65,6 +60,10 @@ export function ExerciseRow({
               className="w-20"
               contentStyle={{ fontSize: 24, fontWeight: '700', textAlign: 'center' }}
             />
+            <View className="flex-row items-center gap-1">
+              <IconButton icon="chevron-up" onPress={onMoveUp} disabled={!canMoveUp} />
+              <IconButton icon="chevron-down" onPress={onMoveDown} disabled={!canMoveDown} />
+            </View>
           </View>
 
           <View className="w-1/2 pl-3 flex flex-col items-center gap-3">

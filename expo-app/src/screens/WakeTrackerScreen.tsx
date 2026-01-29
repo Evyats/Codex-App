@@ -1,11 +1,11 @@
 /** @jsxImportSource nativewind */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useTheme } from 'react-native-paper';
 
-import { Button, Card, CardContent, CardTitle, IconButton, TextInput } from '../components/paper';
+import { Button, Card, CardContent, CardTitle, IconButton, SegmentedButtons, TextInput } from '../components/paper';
 import { WakeEntry } from '../types';
 
 type WakeTrackerScreenProps = {
@@ -26,6 +26,50 @@ function minutesToLabel(minutes: number) {
   return `${h}:${m}`;
 }
 
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+type RangeSelection =
+  | { kind: 'all' }
+  | { kind: 'month'; year: number; monthIndex: number }
+  | { kind: 'year'; year: number };
+
+function buildMonthValue(year: number, monthIndex: number) {
+  return `month-${year}-${monthIndex + 1}`;
+}
+
+function buildYearValue(year: number) {
+  return `year-${year}`;
+}
+
+function parseRangeValue(value: string): RangeSelection {
+  if (value === 'all') return { kind: 'all' };
+  if (value.startsWith('month-')) {
+    const parts = value.split('-');
+    const year = Number.parseInt(parts[1] ?? '', 10);
+    const month = Number.parseInt(parts[2] ?? '', 10);
+    if (!Number.isNaN(year) && !Number.isNaN(month)) {
+      return { kind: 'month', year, monthIndex: Math.max(0, month - 1) };
+    }
+  }
+  if (value.startsWith('year-')) {
+    const year = Number.parseInt(value.split('-')[1] ?? '', 10);
+    if (!Number.isNaN(year)) {
+      return { kind: 'year', year };
+    }
+  }
+  return { kind: 'all' };
+}
+
+function dayOfYear(date: Date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date.getTime() - start.getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function daysInYear(year: number) {
+  return dayOfYear(new Date(year, 11, 31));
+}
+
 export function WakeTrackerScreen({
   entries,
   selectedDate,
@@ -37,19 +81,86 @@ export function WakeTrackerScreen({
   const theme = useTheme();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showMaxTimePicker, setShowMaxTimePicker] = useState(false);
+  const [datePickerBase, setDatePickerBase] = useState(new Date());
+  const [timePickerBase, setTimePickerBase] = useState(new Date());
+  const [maxTimePickerBase, setMaxTimePickerBase] = useState(new Date());
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
+  const [maxYMinutes, setMaxYMinutes] = useState<number | null>(null);
+  const [rangeValue, setRangeValue] = useState(() => {
+    const today = new Date();
+    return buildMonthValue(today.getFullYear(), today.getMonth());
+  });
   const selectedDot = theme.colors.primary;
   const unselectedDot = theme.colors.secondaryContainer ?? theme.colors.secondary;
   const selectedStroke = theme.colors.onPrimary;
 
+  const rangeButtons = useMemo(() => {
+    const today = new Date();
+    const earliestTimestamp = entries.length
+      ? entries.reduce((min, entry) => Math.min(min, new Date(entry.timestamp).getTime()), today.getTime())
+      : today.getTime();
+    const start = new Date(earliestTimestamp);
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    const buttons = [{ value: 'all', label: 'All' }];
+    const cursor = new Date(start);
+    while (cursor <= end) {
+      buttons.push({
+        value: buildMonthValue(cursor.getFullYear(), cursor.getMonth()),
+        label: MONTH_LABELS[cursor.getMonth()],
+      });
+      if (cursor.getMonth() === 11 && (cursor.getFullYear() < end.getFullYear() || cursor.getMonth() < end.getMonth())) {
+        buttons.push({ value: buildYearValue(cursor.getFullYear() + 1), label: `${cursor.getFullYear() + 1}` });
+      }
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+    return buttons;
+  }, [entries]);
+
+  useEffect(() => {
+    if (!rangeButtons.some((button) => button.value === rangeValue)) {
+      const today = new Date();
+      setRangeValue(buildMonthValue(today.getFullYear(), today.getMonth()));
+    }
+  }, [rangeButtons, rangeValue]);
+
+  const range = useMemo(() => parseRangeValue(rangeValue), [rangeValue]);
+
+  const filteredEntries = useMemo(() => {
+    if (range.kind === 'all') return entries;
+    if (range.kind === 'month') {
+      return entries.filter((entry) => {
+        const date = new Date(entry.timestamp);
+        return date.getFullYear() === range.year && date.getMonth() === range.monthIndex;
+      });
+    }
+    return entries.filter((entry) => new Date(entry.timestamp).getFullYear() === range.year);
+  }, [entries, range]);
+
   const graphData = useMemo(
     () =>
-      entries.map((entry) => ({
-        date: new Date(entry.timestamp),
-        minutes: entry.minutes,
-        label: minutesToLabel(entry.minutes),
-      })),
-    [entries]
+      filteredEntries.map((entry) => {
+        const date = new Date(entry.timestamp);
+        const xValue =
+          range.kind === 'month'
+            ? Math.min(date.getDate(), 30)
+            : range.kind === 'year'
+              ? dayOfYear(date)
+              : Math.floor(date.getTime() / (1000 * 60 * 60 * 24));
+        const dateLabel =
+          range.kind === 'month' ? `${date.getDate()}` : `${date.getDate()}.${date.getMonth() + 1}`;
+        return {
+          date,
+          minutes: entry.minutes,
+          label: minutesToLabel(entry.minutes),
+          xValue,
+          dateLabel,
+        };
+      }),
+    [filteredEntries, range]
   );
 
   const chart = useMemo(() => {
@@ -62,12 +173,24 @@ export function WakeTrackerScreen({
     const plotHeight = height - padding.top - padding.bottom;
 
     const ys = graphData.map((d) => d.minutes);
-    const minY = Math.max(0, Math.min(...ys) - 30);
-    const maxY = Math.min(1440, Math.max(...ys) + 30);
+    const baseMinY = Math.max(0, Math.min(...ys) - 30);
+    const baseMaxY = Math.min(1440, Math.max(...ys) + 30);
+    const maxY = maxYMinutes !== null ? Math.min(1440, Math.max(0, maxYMinutes)) : baseMaxY;
+    const minY = Math.max(0, Math.min(baseMinY, maxY - 30));
 
-    const xs = graphData.map((d) => Math.floor(d.date.getTime() / (1000 * 60 * 60 * 24))); // day buckets
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
+    const xs = graphData.map((d) => d.xValue);
+    const minX =
+      range.kind === 'month'
+        ? 1
+        : range.kind === 'year'
+          ? 1
+          : Math.min(...xs);
+    const maxX =
+      range.kind === 'month'
+        ? 30
+        : range.kind === 'year'
+          ? daysInYear(range.year)
+          : Math.max(...xs);
 
     const scaleX = (x: number) =>
       padding.left +
@@ -75,12 +198,12 @@ export function WakeTrackerScreen({
     const scaleY = (y: number) => padding.top + plotHeight - ((y - minY) / (maxY - minY || 1)) * plotHeight;
 
     const points = graphData.map((d, idx) => ({
-      x: scaleX(Math.floor(d.date.getTime() / (1000 * 60 * 60 * 24))),
-      y: scaleY(d.minutes),
+      x: scaleX(d.xValue),
+      y: scaleY(maxYMinutes !== null ? Math.min(d.minutes, maxYMinutes) : d.minutes),
       label: d.label,
-      dateLabel: `${d.date.getDate()}.${d.date.getMonth() + 1}`,
+      dateLabel: d.dateLabel,
       dayOfWeek: d.date.getDay(),
-      id: entries[idx].id,
+      id: filteredEntries[idx]?.id ?? `${idx}`,
     }));
 
     const ticksY = [minY, (minY + maxY) / 2, maxY];
@@ -188,7 +311,7 @@ export function WakeTrackerScreen({
         })}
       </Svg>
     );
-  }, [graphData, theme.colors, entries, selectedEntryId]);
+  }, [graphData, theme.colors, selectedEntryId, range, maxYMinutes, filteredEntries]);
 
   return (
     <ScrollView>
@@ -196,6 +319,43 @@ export function WakeTrackerScreen({
         <Card className="rounded-[18px]" mode="elevated">
           <CardTitle title="Wake-up graph" subtitle="Y = time of wake-up, X = date" />
           <CardContent>{chart}</CardContent>
+        </Card>
+
+        <Card className="rounded-[18px]" mode="outlined">
+          <CardContent className="flex flex-col gap-5">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <SegmentedButtons
+                value={rangeValue}
+                onValueChange={setRangeValue}
+                buttons={rangeButtons}
+                style={{ alignSelf: 'flex-start' }}
+              />
+            </ScrollView>
+
+            <View className="flex-row items-center gap-3">
+              <TextInput
+                mode="outlined"
+                label="Max Y time"
+                value={maxYMinutes !== null ? minutesToLabel(maxYMinutes) : 'Auto'}
+                editable={false}
+                className="flex-1"
+              />
+              <IconButton
+                icon="clock-outline"
+                mode="contained-tonal"
+                onPress={() => {
+                  setMaxTimePickerBase(new Date());
+                  setShowMaxTimePicker(true);
+                }}
+              />
+              <IconButton
+                icon="refresh"
+                mode="contained-tonal"
+                disabled={maxYMinutes === null}
+                onPress={() => setMaxYMinutes(null)}
+              />
+            </View>
+          </CardContent>
         </Card>
 
         <Card className="rounded-[18px]" mode="outlined">
@@ -229,7 +389,14 @@ export function WakeTrackerScreen({
                   editable={false}
                   className="flex-1"
                 />
-                <IconButton icon="calendar-month" mode="contained-tonal" onPress={() => setShowDatePicker(true)} />
+                <IconButton
+                  icon="calendar-month"
+                  mode="contained-tonal"
+                  onPress={() => {
+                    setDatePickerBase(new Date());
+                    setShowDatePicker(true);
+                  }}
+                />
               </View>
               <View className="flex-row items-center gap-4">
                 <TextInput
@@ -239,7 +406,14 @@ export function WakeTrackerScreen({
                   editable={false}
                   className="flex-1"
                 />
-                <IconButton icon="clock-outline" mode="contained-tonal" onPress={() => setShowTimePicker(true)} />
+                <IconButton
+                  icon="clock-outline"
+                  mode="contained-tonal"
+                  onPress={() => {
+                    setTimePickerBase(new Date());
+                    setShowTimePicker(true);
+                  }}
+                />
               </View>
               <View className="flex-row gap-4">
                 <Button mode="contained" icon="plus" onPress={onAdd} className="flex-1">
@@ -268,7 +442,7 @@ export function WakeTrackerScreen({
       <DateTimePickerModal
         isVisible={showDatePicker}
         mode="date"
-        date={selectedDate}
+        date={datePickerBase}
         onConfirm={(date) => {
           const updated = new Date(selectedDate);
           updated.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
@@ -280,7 +454,7 @@ export function WakeTrackerScreen({
       <DateTimePickerModal
         isVisible={showTimePicker}
         mode="time"
-        date={selectedDate}
+        date={timePickerBase}
         onConfirm={(date) => {
           const updated = new Date(selectedDate);
           updated.setHours(date.getHours(), date.getMinutes(), 0, 0);
@@ -288,6 +462,16 @@ export function WakeTrackerScreen({
           setShowTimePicker(false);
         }}
         onCancel={() => setShowTimePicker(false)}
+      />
+      <DateTimePickerModal
+        isVisible={showMaxTimePicker}
+        mode="time"
+        date={maxTimePickerBase}
+        onConfirm={(date) => {
+          setMaxYMinutes(date.getHours() * 60 + date.getMinutes());
+          setShowMaxTimePicker(false);
+        }}
+        onCancel={() => setShowMaxTimePicker(false)}
       />
     </ScrollView>
   );

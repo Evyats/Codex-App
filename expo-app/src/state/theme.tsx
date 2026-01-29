@@ -57,6 +57,12 @@ const PALETTES: ThemePalette[] = [
     dark: { primary: '#7699cc', secondary: '#9cb6dd', background: '#0f1724', surface: '#162234' },
   },
   {
+    id: 'midnight',
+    name: 'Midnight',
+    light: { primary: '#5f80b8', secondary: '#8ea6cc', background: '#eef2f8', surface: '#ffffff' },
+    dark: { primary: '#4e6ea8', secondary: '#6d86b2', background: '#060a12', surface: '#0b1220' },
+  },
+  {
     id: 'solarized',
     name: 'Solarized',
     light: { primary: '#b58900', secondary: '#2aa198', background: '#fdf6e3', surface: '#eee8d5' },

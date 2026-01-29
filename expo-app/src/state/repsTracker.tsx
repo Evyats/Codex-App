@@ -96,8 +96,8 @@ export function RepsTrackerProvider({ children }: { children: ReactNode }) {
     const trimmed = newExerciseName.trim();
     if (!trimmed) return;
     setExercises((prev) => [
-      ...prev,
       { id: `${trimmed}-${Date.now()}`, name: trimmed, reps: 0, step: 1 },
+      ...prev,
     ]);
     setNewExerciseName('');
   };

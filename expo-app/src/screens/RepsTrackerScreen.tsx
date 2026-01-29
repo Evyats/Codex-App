@@ -2,7 +2,7 @@
 import { ScrollView, View } from 'react-native';
 
 import { ExerciseRow } from '../components/ExerciseRow';
-import { Card, CardContent, CardTitle, IconButton, TextInput } from '../components/paper';
+import { Card, CardContent, IconButton, TextInput } from '../components/paper';
 import { Exercise } from '../types';
 
 type RepsTrackerScreenProps = {
@@ -33,24 +33,7 @@ export function RepsTrackerScreen({
   return (
     <ScrollView>
       <View className="px-6 py-8 flex flex-col gap-7">
-        {exercises.map((exercise, index) => (
-          <ExerciseRow
-            key={exercise.id}
-            exercise={exercise}
-            onChangeReps={(value) => onChangeReps(exercise.id, value)}
-            onAdjustReps={(delta) => onAdjustReps(exercise.id, delta)}
-            onAdjustStep={(delta) => onAdjustStep(exercise.id, delta)}
-            onReset={() => onReset(exercise.id)}
-            onRemove={() => onRemove(exercise.id)}
-            onMoveUp={() => onMoveExercise(exercise.id, 'up')}
-            onMoveDown={() => onMoveExercise(exercise.id, 'down')}
-            canMoveUp={index > 0}
-            canMoveDown={index < exercises.length - 1}
-          />
-        ))}
-
         <Card className="rounded-[18px]" mode="outlined">
-          <CardTitle title="Add exercise" />
           <CardContent>
             <View className="flex-row items-center gap-3">
               <TextInput
@@ -71,6 +54,22 @@ export function RepsTrackerScreen({
             </View>
           </CardContent>
         </Card>
+
+        {exercises.map((exercise, index) => (
+          <ExerciseRow
+            key={exercise.id}
+            exercise={exercise}
+            onChangeReps={(value) => onChangeReps(exercise.id, value)}
+            onAdjustReps={(delta) => onAdjustReps(exercise.id, delta)}
+            onAdjustStep={(delta) => onAdjustStep(exercise.id, delta)}
+            onReset={() => onReset(exercise.id)}
+            onRemove={() => onRemove(exercise.id)}
+            onMoveUp={() => onMoveExercise(exercise.id, 'up')}
+            onMoveDown={() => onMoveExercise(exercise.id, 'down')}
+            canMoveUp={index > 0}
+            canMoveDown={index < exercises.length - 1}
+          />
+        ))}
       </View>
     </ScrollView>
   );
