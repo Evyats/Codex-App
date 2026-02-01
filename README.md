@@ -1,25 +1,25 @@
-# Expo + TypeScript + Tailwind (NativeWind)
+# Codex App
 
-Quick start for the generated Expo app with TypeScript and Tailwind via NativeWind.
+A small Expo app that hosts a few mini apps:
+- Wake-up tracker (log wake times and view a simple graph)
+- Reps tracker (track exercise reps with quick adjustments)
+- Design lab (UI component showcase)
 
-## Requirements
-- Node.js and npm
-- Expo Go app on a device, or an emulator/simulator for Android/iOS, or a browser for web
-
-## Install
+## Run locally
 ```bash
-npm install
-```
-
-## Run
-```bash
-npm start
-```
-- In the Expo CLI, press `w` for web, or scan the QR code/open on Android or iOS.
-or:
+cd expo-app
 npx expo start
+```
 
-## Tailwind/NativeWind notes
-- Styling uses `className` on React Native components (NativeWind).
-- Content globs are configured in `tailwind.config.js`; adjust if you add new directories.
-- If you change Tailwind config, restart the Expo dev server to pick up the updates.
+## Deploy to your phone (Expo build)
+1) Create/sign in to an Expo account.
+2) From the project root, go into the app folder:
+```bash
+cd expo-app
+```
+3) Build with Expo (EAS) and upload to Expo’s servers:
+```bash
+eas build -p android
+```
+(or `-p ios` for iOS)
+4) When the build finishes, open the build page on expo.dev and install it on your phone.

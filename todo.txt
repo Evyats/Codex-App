@@ -1,5 +1,3 @@
-add more boxes styles to the design lab mini app.
-
 get from codex a report of what can be improved: readability, coding best practices, uniformity, expo paved road, designing patterns, simplicity,
 and based on it - make him improve the app.
 this comes from the assumption that things weren't made optimilly as codex (and i) didn't know all the features and general design that the app will include, and therefore not optimal decisions were made during the development process - additions were on top of the already existing architecture that was designed for a smaller app with much less requirements.
@@ -7,3 +5,5 @@ this comes from the assumption that things weren't made optimilly as codex (and 
 design on paper a better layout for some of the components.
 
 get a codex report of all the things he learned from the process, what he could implement without bugs if he knew upfront (for better future projects with all lessons learned attached upfront).
+
+add another mini app for weight tracking, similar to the existing one i currently use, same features.
