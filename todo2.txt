@@ -1,0 +1,17 @@
+
+wake up tracker:
+- when open the mini app, update the fields of the date and time to be of the current date and time dont wait for the user to choose them for that.
+- "all" button should be separated from the rest but at the same position - same row and still on the far left. i just want it to be not part of that line of buttons of all months.
+
+
+reps tracker:
+- step size text and buttons, i want them to be inside some box, so it will have a border.
+- remove and reset buttons, i dont want text on them, just an icon.
+- between exercise name and the exercise themselves, add tabs. default tab is all, but near that you have a plus button to insert a new one. that plus button always the rightest. each tab will have its own reps tracking. i want also an option to remove the chosen tab along with all of its tracking data.
+
+
+
+new weight tracking mini app:
+- it will have generally similar layout of the one of the wake up tracking.
+- lets have the first version of that be pretty simple, without the months tabs as in the wake up tracking.
+- i want the graph to have some lines that visualize the trend of that graph.
