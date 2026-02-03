@@ -1,11 +1,22 @@
 /** @jsxImportSource nativewind */
-import { ScrollView, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
+import { useState } from 'react';
 
 import { ExerciseRow } from '../components/ExerciseRow';
-import { Card, CardContent, IconButton, TextInput } from '../components/paper';
+import { Button, Card, CardContent, IconButton, TextInput } from '../components/paper';
 import { Exercise } from '../types';
 
+type RepsTab = {
+  id: string;
+  name: string;
+};
+
 type RepsTrackerScreenProps = {
+  tabs: RepsTab[];
+  selectedTabId: string;
+  onSelectTab: (id: string) => void;
+  onAddTab: (name?: string) => void;
+  onRemoveTab: (id: string) => void;
   exercises: Exercise[];
   newExerciseName: string;
   onChangeNewExerciseName: (value: string) => void;
@@ -19,6 +30,11 @@ type RepsTrackerScreenProps = {
 };
 
 export function RepsTrackerScreen({
+  tabs,
+  selectedTabId,
+  onSelectTab,
+  onAddTab,
+  onRemoveTab,
   exercises,
   newExerciseName,
   onChangeNewExerciseName,
@@ -30,6 +46,11 @@ export function RepsTrackerScreen({
   onAddExercise,
   onMoveExercise,
 }: RepsTrackerScreenProps) {
+  const [newTabName, setNewTabName] = useState('');
+  const [showTabModal, setShowTabModal] = useState(false);
+  const selectedTab = tabs.find((tab) => tab.id === selectedTabId);
+  const canRemoveTab = selectedTab && selectedTab.id !== 'all';
+
   return (
     <ScrollView>
       <View className="px-6 py-8 flex flex-col gap-7">
@@ -55,6 +76,53 @@ export function RepsTrackerScreen({
           </CardContent>
         </Card>
 
+        <Card className="rounded-[18px]" mode="outlined">
+          <CardContent>
+            <View className="flex-row items-center gap-1">
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-1">
+                <View className="flex-row items-center gap-2 pr-2">
+                  {tabs.map((tab) => {
+                    const isSelected = tab.id === selectedTabId;
+                    return (
+                      <Button
+                        key={tab.id}
+                        mode="contained"
+                        compact
+                        icon={isSelected ? 'check' : undefined}
+                        onPress={() => onSelectTab(tab.id)}
+                      >
+                        {tab.name}
+                      </Button>
+                    );
+                  })}
+                </View>
+              </ScrollView>
+              <IconButton
+                icon="delete-outline"
+                mode="contained-tonal"
+                disabled={!canRemoveTab}
+                accessibilityLabel="Remove tab"
+                onPress={() => {
+                  if (!canRemoveTab || !selectedTab) return;
+                  Alert.alert('Remove tab?', `Delete "${selectedTab.name}" and its data?`, [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Remove', style: 'destructive', onPress: () => onRemoveTab(selectedTab.id) },
+                  ]);
+                }}
+              />
+              <IconButton
+                icon="plus"
+                mode="contained"
+                onPress={() => {
+                  setNewTabName('');
+                  setShowTabModal(true);
+                }}
+                accessibilityLabel="Add tab"
+              />
+            </View>
+          </CardContent>
+        </Card>
+
         {exercises.map((exercise, index) => (
           <ExerciseRow
             key={exercise.id}
@@ -71,6 +139,36 @@ export function RepsTrackerScreen({
           />
         ))}
       </View>
+
+      <Modal visible={showTabModal} transparent animationType="fade" onRequestClose={() => setShowTabModal(false)}>
+        <Pressable className="flex-1 bg-black/50 justify-center px-6" onPress={() => setShowTabModal(false)}>
+          <Pressable className="rounded-[18px] bg-white p-5 dark:bg-slate-900" onPress={(event) => event.stopPropagation()}>
+            <View className="flex flex-col gap-4">
+              <TextInput
+                mode="outlined"
+                label="Tab name"
+                value={newTabName}
+                onChangeText={setNewTabName}
+                autoFocus
+              />
+              <View className="flex-row justify-end gap-2">
+                <Button mode="text" onPress={() => setShowTabModal(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    onAddTab(newTabName.trim() || undefined);
+                    setShowTabModal(false);
+                  }}
+                >
+                  Add
+                </Button>
+              </View>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ScrollView>
   );
 }

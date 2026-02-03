@@ -2,11 +2,11 @@
 import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { WakeTrackerScreen } from '../src/screens/WakeTrackerScreen';
-import { useWakeTracker } from '../src/state/wakeTracker';
+import { WeightTrackerScreen } from '../src/screens/WeightTrackerScreen';
+import { useWeightTracker } from '../src/state/weightTracker';
 
-export default function WakeTrackerRoute() {
-  const { entries, selectedDate, setSelectedDate, addEntry, removeEntry, resetToSeed } = useWakeTracker();
+export default function WeightTrackerRoute() {
+  const { entries, selectedDate, setSelectedDate, addEntry } = useWeightTracker();
 
   useFocusEffect(
     useCallback(() => {
@@ -15,13 +15,11 @@ export default function WakeTrackerRoute() {
   );
 
   return (
-    <WakeTrackerScreen
+    <WeightTrackerScreen
       entries={entries}
       selectedDate={selectedDate}
       onChangeDate={setSelectedDate}
       onAdd={addEntry}
-      onRemoveEntry={removeEntry}
-      onResetToSeed={resetToSeed}
     />
   );
 }

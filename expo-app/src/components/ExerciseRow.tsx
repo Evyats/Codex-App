@@ -2,7 +2,7 @@
 import { View } from 'react-native';
 
 import { Exercise } from '../types';
-import { Button, Card, CardContent, IconButton, Text, TextInput } from './paper';
+import { Card, CardContent, IconButton, Text, TextInput } from './paper';
 
 type ExerciseRowProps = {
   exercise: Exercise;
@@ -35,18 +35,13 @@ export function ExerciseRow({
         <View className="flex-row items-center justify-between">
           <Text variant="titleMedium">{exercise.name}</Text>
           <View className="flex-row items-center gap-1">
-            <Button mode="text" compact onPress={onReset}>
-              Reset
-            </Button>
-            <Button
-              mode="text"
-              compact
-              textColor="#ef4444"
+            <IconButton icon="refresh" accessibilityLabel="Reset reps" onPress={onReset} />
+            <IconButton
               icon="delete-outline"
+              accessibilityLabel="Remove exercise"
+              iconColor="#ef4444"
               onPress={onRemove}
-            >
-              Remove
-            </Button>
+            />
           </View>
         </View>
 
@@ -66,17 +61,19 @@ export function ExerciseRow({
             </View>
           </View>
 
-          <View className="w-1/2 pl-3 flex flex-col items-center gap-3">
-            <Text className="text-xs tracking-[0.6px] text-slate-500 dark:text-slate-400" variant="labelSmall">
-              Step size ({exercise.step})
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <IconButton icon="minus-circle-outline" size={22} onPress={() => onAdjustStep(-1)} />
-              <IconButton icon="plus-circle-outline" size={22} onPress={() => onAdjustStep(1)} />
-            </View>
-            <View className="flex-row items-center gap-2">
-              <IconButton icon="minus" mode="contained-tonal" onPress={() => onAdjustReps(-exercise.step)} />
-              <IconButton icon="plus" mode="contained-tonal" onPress={() => onAdjustReps(exercise.step)} />
+          <View className="w-1/2 pl-3">
+            <View className="flex flex-col items-center gap-3 rounded-[14px] border border-slate-200 px-3 py-3 dark:border-slate-700">
+              <Text className="text-xs tracking-[0.6px] text-slate-500 dark:text-slate-400" variant="labelSmall">
+                Step size ({exercise.step})
+              </Text>
+              <View className="flex-row items-center gap-2">
+                <IconButton icon="minus-circle-outline" size={22} onPress={() => onAdjustStep(-1)} />
+                <IconButton icon="plus-circle-outline" size={22} onPress={() => onAdjustStep(1)} />
+              </View>
+              <View className="flex-row items-center gap-2">
+                <IconButton icon="minus" mode="contained-tonal" onPress={() => onAdjustReps(-exercise.step)} />
+                <IconButton icon="plus" mode="contained-tonal" onPress={() => onAdjustReps(exercise.step)} />
+              </View>
             </View>
           </View>
         </View>

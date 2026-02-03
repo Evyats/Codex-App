@@ -4,6 +4,11 @@ import { useRepsTracker } from '../src/state/repsTracker';
 
 export default function RepsTrackerRoute() {
   const {
+    tabs,
+    selectedTabId,
+    setSelectedTabId,
+    addTab,
+    removeTab,
     exercises,
     newExerciseName,
     setNewExerciseName,
@@ -18,6 +23,11 @@ export default function RepsTrackerRoute() {
 
   return (
     <RepsTrackerScreen
+      tabs={tabs}
+      selectedTabId={selectedTabId}
+      onSelectTab={setSelectedTabId}
+      onAddTab={addTab}
+      onRemoveTab={removeTab}
       exercises={exercises}
       newExerciseName={newExerciseName}
       onChangeNewExerciseName={setNewExerciseName}

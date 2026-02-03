@@ -18,6 +18,7 @@ import {
 import { RepsTrackerProvider } from '../src/state/repsTracker';
 import { ThemePaletteProvider, useThemePalette } from '../src/state/theme';
 import { WakeTrackerProvider } from '../src/state/wakeTracker';
+import { WeightTrackerProvider } from '../src/state/weightTracker';
 
 type RootProvidersProps = {
   children: ReactNode;
@@ -29,7 +30,9 @@ function RootProviders({ children, theme }: RootProvidersProps) {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <RepsTrackerProvider>
-          <WakeTrackerProvider>{children}</WakeTrackerProvider>
+          <WakeTrackerProvider>
+            <WeightTrackerProvider>{children}</WeightTrackerProvider>
+          </WakeTrackerProvider>
         </RepsTrackerProvider>
       </PaperProvider>
     </SafeAreaProvider>
@@ -104,6 +107,7 @@ function ThemedLayout() {
         <Stack.Screen name="index" options={{ title: 'Mini Apps' }} />
         <Stack.Screen name="reps-tracker" options={{ title: 'Reps Tracker' }} />
         <Stack.Screen name="wake-tracker" options={{ title: 'Wake-up Tracker' }} />
+        <Stack.Screen name="weight-tracker" options={{ title: 'Weight Tracker' }} />
         <Stack.Screen name="design-lab" options={{ title: 'Design Lab' }} />
       </Stack>
     </RootProviders>

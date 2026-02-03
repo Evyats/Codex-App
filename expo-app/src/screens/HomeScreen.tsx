@@ -17,6 +17,9 @@ export function HomeScreen() {
     if (appId === 'wake-tracker') {
       router.push('/wake-tracker');
     }
+    if (appId === 'weight-tracker') {
+      router.push('/weight-tracker');
+    }
     if (appId === 'design-lab') {
       router.push('/design-lab');
     }

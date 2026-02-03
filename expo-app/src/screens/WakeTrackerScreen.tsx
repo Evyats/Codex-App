@@ -105,7 +105,7 @@ export function WakeTrackerScreen({
     start.setHours(0, 0, 0, 0);
     const end = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    const buttons = [{ value: 'all', label: 'All' }];
+    const buttons: { value: string; label: string }[] = [{ value: 'all', label: 'All' }];
     const cursor = new Date(start);
     while (cursor <= end) {
       buttons.push({

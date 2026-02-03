@@ -12,6 +12,11 @@ export const INNER_APPS: { id: InnerAppId; title: string; description: string }[
     description: 'Log your wake-up time daily and see it on a simple graph.',
   },
   {
+    id: 'weight-tracker',
+    title: 'Weight Tracker',
+    description: 'Track weight changes over time with trend lines.',
+  },
+  {
     id: 'design-lab',
     title: 'Design Lab',
     description: 'Explore Paper components, styles, and layout options.',
